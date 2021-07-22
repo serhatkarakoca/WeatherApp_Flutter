@@ -20,22 +20,23 @@ class _SelectCityWidgetState extends State<SelectCityWidget> {
         child: Row(
           children: [
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
+              child: Container(
+                margin: EdgeInsets.all(16.0),
                 child: TextFormField(
                   controller: _textController,
                   decoration: InputDecoration(
-                      labelText: "Şehir",
-                      hintText: "Şehir Seçin",
-                      border: OutlineInputBorder()),
+                    labelText: "Şehir",
+                    hintText: "Şehir Seçin",
+                    border: OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.search, size: 24),
+                      onPressed: () {
+                        Navigator.pop(context, _textController.text);
+                      },
+                    ),
+                  ),
                 ),
               ),
-            ),
-            IconButton(
-              onPressed: () {
-                Navigator.pop(context,_textController.text);
-              },
-              icon: Icon(Icons.search),
             ),
           ],
         ),

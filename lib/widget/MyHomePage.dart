@@ -36,56 +36,62 @@ class MyHomePage extends StatelessWidget {
       body: Center(
         child: BlocBuilder(
             bloc: _weatherBloc,
-            builder: (context, WeatherState state){
-          if (state is WeatherInitial) {
-            return Center(child: Text("Şehir Seçiniz !"));
-          }
-          if (state is WeatherLoaded) {
-            final weatherInfo = state.weather;
-            _refresh.complete();
-            _refresh = Completer<void>();
+            builder: (context, WeatherState state) {
+              if (state is WeatherInitial) {
+                return Center(child: Text("Şehir Seçiniz !"));
+              }
+              if (state is WeatherLoaded) {
+                final weatherInfo = state.weather;
+                _refresh.complete();
+                _refresh = Completer<void>();
 
-            return RefreshIndicator(
-              onRefresh: (){
-              _weatherBloc.add(RefreshWeatherEvent(cityName: selectedCity));
-                return _refresh.future;
-              },
-              child: ListView(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Center(
-                        child: LocationWidget(
-                      selectedLocation: weatherInfo.title!,
-                    )),
+                return RefreshIndicator(
+                  onRefresh: () {
+                    _weatherBloc
+                        .add(RefreshWeatherEvent(cityName: selectedCity));
+                    return _refresh.future;
+                  },
+                  child: ListView(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Center(
+                            child: LocationWidget(
+                          selectedLocation: weatherInfo.title!,
+                        )),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Center(child: LastUpdatedWidget()),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Center(child: WeatherImageWidget()),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Center(child: TemperatureWidget()),
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Center(child: LastUpdatedWidget()),
+                );
+              }
+              if (state is WeatherErrorState) {
+                return Container(
+                  color: Colors.redAccent,
+                  child: Center(
+                    child: Text(
+                      "Şehir Bulunamadı ! ",
+                      style: TextStyle(color: Colors.white, fontSize: 24),
+                    ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Center(child: WeatherImageWidget()),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Center(child: TemperatureWidget()),
-                  ),
-                ],
-              ),
-            );
-          }
-          if(state is WeatherErrorState){
-            return Center(
-              child: Text("Error"),
-            );
-          }
-          else{
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        }),
+                );
+              } else {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            }),
       ),
     );
   }
